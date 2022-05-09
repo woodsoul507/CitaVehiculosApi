@@ -30,19 +30,20 @@ namespace CitaVehiculosApi.Controllers
             return await _context.Citas.ToListAsync();
         }
 
-        // GET: api/Citas/5
+        // GET: api/Citas/placa/52342
         [HttpGet("placa/{placa}")]
-        public async Task<ActionResult<Cita>> GetCita(string placa)
+        public async Task<ActionResult<List<Cita>>> GetCita(string placa)
         {
-            var citas = await _context.Citas.ToListAsync();
-            var cita = citas.Find(cita => placa == cita.Placa);
+            var citas = await _context.Citas.Where(cita =>
+                cita.Placa == placa
+            ).ToListAsync();
 
-            if (cita == null)
+            if (citas.Count == 0)
             {
                 return NotFound("No tiene citas.");
             }
 
-            return cita;
+            return citas;
         }
 
         // GET: api/Citas/5
