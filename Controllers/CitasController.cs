@@ -27,7 +27,8 @@ namespace CitaVehiculosApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cita>>> GetCitas()
         {
-            return await _context.Citas.ToListAsync();
+            var response = await _context.Citas.ToListAsync();
+            return  new JsonResult(Ok(response));
         }
 
         // GET: api/Citas/placa/52342
@@ -40,10 +41,10 @@ namespace CitaVehiculosApi.Controllers
 
             if (citas.Count == 0)
             {
-                return NotFound("No tiene citas.");
+                return new JsonResult(NotFound("No tiene cita registrada"));
             }
 
-            return citas;
+            return new JsonResult(Ok(citas));
         }
 
         // GET: api/Citas/5
@@ -54,10 +55,10 @@ namespace CitaVehiculosApi.Controllers
 
             if (cita == null)
             {
-                return NotFound("No se encontro cita con el numero de ID");
+                return new JsonResult(NotFound("No se encontro cita con el numero de ID"));
             }
 
-            return cita;
+            return new JsonResult(Ok(cita));
         }
 
         // PUT: api/Citas/5
@@ -67,7 +68,7 @@ namespace CitaVehiculosApi.Controllers
         {
             if (id != cita.Id)
             {
-                return BadRequest();
+                return new JsonResult(BadRequest());
             }
 
             _context.Entry(cita).State = EntityState.Modified;
@@ -80,7 +81,7 @@ namespace CitaVehiculosApi.Controllers
             {
                 if (!CitaExists(id))
                 {
-                    return NotFound();
+                    return new JsonResult(NotFound("No se encontro cita con el numero de ID"));
                 }
                 else
                 {
@@ -88,7 +89,7 @@ namespace CitaVehiculosApi.Controllers
                 }
             }
 
-            return NoContent();
+            return new JsonResult(NoContent());
         }
 
         // POST: api/Citas
@@ -99,7 +100,8 @@ namespace CitaVehiculosApi.Controllers
             _context.Citas.Add(cita);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCita", new { id = cita.Id }, cita);
+            var response = CreatedAtAction("GetCita", new { id = cita.Id }, cita);
+            return new JsonResult(Ok(response));
         }
 
         // DELETE: api/Citas/5
@@ -109,13 +111,13 @@ namespace CitaVehiculosApi.Controllers
             var cita = await _context.Citas.FindAsync(id);
             if (cita == null)
             {
-                return NotFound();
+                return new JsonResult(NotFound("No se encontro cita con el numero de ID"));
             }
 
             _context.Citas.Remove(cita);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return new JsonResult(NoContent());
         }
 
         private bool CitaExists(int id)
